@@ -18,11 +18,11 @@ function init() {
     <span class="item_title">${items.title}</span>
     <span class="item_num">${items.tabs.length} 个标签</span>
     <span class="dmx_button" data-action="openAll"><i class="icon icon-open"></i>打开全部</span>
-    ${items.locked ? '' : '<span class="dmx_button" data-action="deleteAll"><i class="icon icon-trash"></i>删除全部</span>'}
     <span class="extra">
         <span class="dmx_button" data-action="lock">${items.locked ? '<i class="icon icon-unlock"></i>解锁' : '<i class="icon icon-lock"></i>锁定'}</span>
         <span class="dmx_button" data-action="topping">${items.topped ? '<i class="icon icon-favorite-line"></i>撤顶' : '<i class="icon icon-favorite"></i>置顶'}</span>
         <span class="dmx_button" data-action="rename"><i class="icon icon-edit"></i>改名</span>
+        ${items.locked ? '' : '<span class="dmx_button" data-action="deleteAll"><i class="icon icon-trash"></i>删除</span>'}
     </span>
 </div>`
         s += '<div class="card_items">'
