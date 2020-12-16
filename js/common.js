@@ -1,6 +1,6 @@
 'use strict'
 
-window.isDebug = true
+window.isDebug = false
 window.isFirefox = navigator.userAgent.includes("Firefox")
 window.B = {
     getBackgroundPage: chrome.extension.getBackgroundPage,
