@@ -25,6 +25,7 @@ function onClicked() {
         tabs.forEach(tab => {
             ids.push(tab.id)
             if (tab.url.indexOf(B.homeUrl) === 0) return // 排除扩展首页
+            if (tab.url.indexOf('chrome://newtab/') === 0) return // 排除新标签页
             if (arr.includes(tab.url)) return // 排除重复链接
             arr.push(tab.url)
             list.push({title: tab.title, url: tab.url})

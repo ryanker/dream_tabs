@@ -95,7 +95,8 @@ function init() {
     // 删除全部
     mainEl.querySelectorAll('.card_title [data-action="deleteAll"]').forEach(el => {
         el.addEventListener('click', function () {
-            let p = this.parentNode.parentNode
+            if (!confirm("您确定要删除这些标签页吗？")) return
+            let p = this.parentNode.parentNode.parentNode
             p.remove()
 
             // 删除数据
