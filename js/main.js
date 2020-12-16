@@ -34,10 +34,9 @@ function init() {
     mainEl.innerHTML = s
 
     // 打开单条
-    mainEl.querySelectorAll('.item a').forEach(el => {
-        el.addEventListener('click', function (e) {
-            e.preventDefault()
-            open(this.href)
+    mainEl.querySelectorAll('.item').forEach(el => {
+        el.addEventListener('click', function () {
+            open(this.querySelector('a').href)
 
             // 如果没有上锁，就删除数据
             let p = this.parentNode.parentNode.parentNode
@@ -53,10 +52,8 @@ function init() {
             }
         })
     })
-    mainEl.querySelectorAll('.item').forEach(el => {
-        el.addEventListener('click', function () {
-            this.querySelector('a').click()
-        })
+    mainEl.querySelectorAll('.item a').forEach(el => {
+        el.addEventListener('click', e => e.preventDefault())
     })
 
     // 打开全部
