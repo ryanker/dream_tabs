@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 })
 
 // 添加上下文菜单
-B.contextMenus.create({title: "打开梦想标签收纳盒", onclick: openHome})
+B.contextMenus.create({title: "打开收纳盒", onclick: openHome})
 B.contextMenus.create({title: "收纳全部标签", onclick: onClicked})
 
 function onClicked() {

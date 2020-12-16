@@ -189,6 +189,7 @@ a:hover {
 .card_title .item_title {
     color: #18191B;
     font-size: 18px;
+    word-break: break-all;
     max-width: 300px;
     margin-right: 20px;
     padding: 4px 2px;

@@ -25,7 +25,7 @@ function addTabList(tabs) {
     if (tabs.length > 0) {
         let t = Date.now()
         tabList[t] = {
-            title: `收纳于 ${getDate()} ${getWeek()}`,
+            title: getTitle(),
             locked: false,
             topped: false,
             toppedDate: 0,
@@ -44,8 +44,12 @@ function sortTabList(tabList) {
     return arr
 }
 
-function getDate() {
-    let d = new Date()
+function getTitle(value) {
+    return `收纳于 ${getDate(value)} ${getWeek(value)}`
+}
+
+function getDate(value) {
+    let d = value ? new Date(value) : new Date()
     d.setMinutes(-d.getTimezoneOffset() + d.getMinutes(), d.getSeconds(), 0)
     let s = d.toJSON()
     s = s.replace('T', ' ')
@@ -53,9 +57,10 @@ function getDate() {
     return s
 }
 
-function getWeek() {
+function getWeek(value) {
+    let d = value ? new Date(value) : new Date()
     let weekArr = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
-    return weekArr[(new Date()).getDay()]
+    return weekArr[d.getDay()]
 }
 
 function saveStorage(tabList) {
