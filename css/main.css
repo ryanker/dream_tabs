@@ -281,3 +281,7 @@ a:hover {
 .card_items .item:hover .item_remove {
     display: block;
 }
+
+.card_items.drag .item .item_remove {
+    display: none;
+}

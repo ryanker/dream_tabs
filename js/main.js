@@ -4,6 +4,7 @@ let tabList = bg.tabList
 let mainEl = document.querySelector('.main')
 document.addEventListener('DOMContentLoaded', async function () {
     init()
+    initDrag() // 拖放
 })
 
 function init() {
@@ -25,9 +26,13 @@ function init() {
         ${items.locked ? '' : '<span class="dmx_button" data-action="deleteAll"><i class="icon icon-trash"></i>删除</span>'}
     </span>
 </div>`
-        s += '<div class="card_items">'
+        s += `<div class="card_items" data-locked="${items.locked}">`
         items.tabs.forEach((v, k) => {
-            s += `<div class="item" data-key="${k}"><img src="chrome://favicon/${v.url}"><a href="${v.url}">${v.title}</a>${items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'}</div>`
+            s += `<div class="item" data-key="${k}">
+    <img src="chrome://favicon/${new URL(v.url).origin}">
+    <a href="${v.url}">${v.title}</a>
+    ${items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'}
+</div>`
         })
         s += '</div></div>'
     })
@@ -160,5 +165,93 @@ function init() {
                 fun(el)
             }
         })
+    })
+
+    // 拖动
+    mainEl.querySelectorAll('.card_items[data-locked="false"] .item').forEach(el => {
+        el.setAttribute('draggable', 'true')
+        el.querySelectorAll('img,a').forEach(e => e.setAttribute('draggable', 'false'))
+    })
+}
+
+function initDrag() {
+    let className = 'item'
+    let dragEl, dragPkey, dragIkey
+    let dropEl
+    let shadowEl
+    let checkEl = function (el, deep) {
+        deep = deep || 3
+        while (el) {
+            if (el.className === className) return el
+            if (deep < 1) return false
+            deep--
+            el = el.parentNode
+        }
+        return false
+    }
+    document.addEventListener("dragstart", function (e) {
+        let el = checkEl(e.target)
+        if (!el) return
+        el.style.opacity = '.5' // 半透明
+        addClass(el.parentNode, 'drag') // 隐藏删除按钮
+        dragEl = el // 拖动元素
+        dragPkey = el.parentNode.parentNode.dataset.key
+        dragIkey = el.dataset.key
+
+        // 放置阴影区域
+        shadowEl = document.createElement('div')
+        shadowEl.style.width = el.offsetWidth + 'px'
+        shadowEl.style.height = el.offsetHeight + 'px'
+        shadowEl.style.background = '#f8f9fa'
+        shadowEl.style.border = '1px dashed #444'
+        shadowEl.setAttribute('data-shadow', 'true')
+    })
+
+    document.addEventListener("dragend", function (e) {
+        if (!dragEl) return
+        dragEl.style.opacity = '' // 去掉透明
+        dragEl.style.display = '' // 显示元素
+        rmClass(dragEl.parentNode, 'drag') // 显示删除按钮
+        dragEl = null
+        dropEl = null
+        shadowEl = null
+        document.querySelectorAll('[data-shadow="true"]').forEach(el => el.remove())
+    })
+
+    document.addEventListener("dragenter", function (e) {
+        let el = checkEl(e.target)
+        if (!dragEl || !el || dragEl === el || el.parentNode.dataset.locked === 'true') return
+        dropEl = el
+    })
+
+    document.addEventListener("dragover", function (e) {
+        if (!dragEl || !dropEl || !shadowEl) return
+        e.preventDefault() // 阻止默认动作以启用 drop
+        let y = dropEl.offsetTop + (dropEl.offsetHeight / 2)
+        if (e.pageY < y) {
+            dropEl.insertAdjacentElement('beforebegin', shadowEl)
+        } else {
+            dropEl.insertAdjacentElement('afterend', shadowEl)
+        }
+        dragEl.style.display = 'none' // 隐藏元素
+    })
+
+    document.addEventListener("drop", function (e) {
+        if (!dragEl || !dropEl || !shadowEl) return
+        e.preventDefault()
+        shadowEl.parentNode.replaceChild(dragEl, shadowEl) // 替换阴影区域
+
+        // 获取数据移动到什么位置
+        let prevEl = dragEl.previousSibling
+        let ikey = prevEl && prevEl.className === className ? Number(prevEl.dataset.key) + 1 : 0
+        let pkey = dragEl.parentNode.parentNode.dataset.key
+        let val = tabList[dragPkey].tabs[dragIkey]
+        if (!tabList[pkey]?.locked && val) {
+            tabList[dragPkey].tabs.splice(dragIkey, 1) // 删除移动数据
+            tabList[pkey].tabs.splice(ikey, 0, val) // 添加移动数据
+            if (tabList[dragPkey].tabs.length < 1) delete tabList[dragPkey]
+            saveStorage(tabList)
+            init()
+        }
     })
 }

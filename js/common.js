@@ -169,3 +169,31 @@ function storage(type, method, options) {
 function debug(...data) {
     isDebug && console.log('[DMX DEBUG]', ...data)
 }
+
+function addClass(el, className) {
+    className = className.trim()
+    let oldClassName = el.className.trim()
+    if (!oldClassName) {
+        el.className = className
+    } else if (` ${oldClassName} `.indexOf(` ${className} `) === -1) {
+        el.className += ' ' + className
+    }
+}
+
+function rmClass(el, className) {
+    if (!el.className) return
+    className = className.trim()
+    let newClassName = el.className.trim()
+    if ((` ${newClassName} `).indexOf(` ${className} `) === -1) return
+    newClassName = newClassName.replace(new RegExp('(?:^|\\s)' + className + '(?:\\s|$)', 'g'), ' ').trim()
+    if (newClassName) {
+        el.className = newClassName
+    } else {
+        el.removeAttribute('class')
+    }
+}
+
+function hasClass(el, className) {
+    if (!el.className) return false
+    return (` ${el.className.trim()} `).indexOf(` ${className.trim()} `) > -1
+}
