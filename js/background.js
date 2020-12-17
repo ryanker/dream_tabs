@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         tabList = list
         storageShowAll()
     }).catch((err, list) => {
-        tabList = list
+        tabList = list || {}
         debug('loadStorage error:', err, 'list:', list)
     })
 
@@ -26,6 +26,7 @@ function onClicked() {
             ids.push(tab.id)
             if (tab.url.indexOf(B.homeUrl) === 0) return // 排除扩展首页
             if (tab.url.indexOf('chrome://newtab/') === 0) return // 排除新标签页
+            if (tab.url.indexOf('about:') === 0) return // 排除空白页
             if (arr.includes(tab.url)) return // 排除重复链接
             arr.push(tab.url)
             list.push({title: tab.title, url: tab.url})

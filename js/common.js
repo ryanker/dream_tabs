@@ -111,7 +111,7 @@ function getAllTabs() {
         } else {
             browser.tabs.query({}).then(tabs => {
                 resolve(tabs)
-            }).catch(err => reject(err))
+            }, err => reject(err))
         }
     })
 }
