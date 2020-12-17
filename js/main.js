@@ -28,11 +28,9 @@ function init() {
 </div>`
         s += `<div class="card_items" data-locked="${items.locked}">`
         items.tabs.forEach((v, k) => {
-            s += `<div class="item" data-key="${k}">
-    <img src="chrome://favicon/${new URL(v.url).origin}">
-    <a href="${v.url}">${v.title}</a>
-    ${items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'}
-</div>`
+            let iconUrl = isFirefox ? 'https://s2.googleusercontent.com/s2/favicons?sz=32&amp;domain=' + new URL(v.url).host : 'chrome://favicon/' + new URL(v.url).origin
+            let deleteBut = items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'
+            s += `<div class="item" data-key="${k}"><img src="${iconUrl}"><a href="${v.url}">${v.title}</a>${deleteBut}</div>`
         })
         s += '</div></div>'
     })
@@ -168,10 +166,8 @@ function init() {
     })
 
     // 拖动
-    mainEl.querySelectorAll('.card_items[data-locked="false"] .item').forEach(el => {
-        el.setAttribute('draggable', 'true')
-        el.querySelectorAll('img,a').forEach(e => e.setAttribute('draggable', 'false'))
-    })
+    mainEl.querySelectorAll('img,a').forEach(e => e.setAttribute('draggable', 'false')) // 禁止拖动
+    mainEl.querySelectorAll('.card_items[data-locked="false"] .item').forEach(el => el.setAttribute('draggable', 'true'))
 }
 
 function initDrag() {
