@@ -28,7 +28,7 @@ function init() {
 </div>`
         s += `<div class="card_items" data-locked="${items.locked}">`
         items.tabs.forEach((v, k) => {
-            let iconUrl = isFirefox ? 'https://s2.googleusercontent.com/s2/favicons?domain=' + new URL(v.url).host : 'chrome://favicon/' + new URL(v.url).origin
+            let iconUrl = isFirefox ? 'https://s2.googleusercontent.com/s2/favicons?domain=' + (v.url ? (new URL(v.url)).host : '') : 'chrome://favicon/' + (v.url ? (new URL(v.url)).origin : '')
             let deleteBut = items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'
             s += `<div class="item" data-key="${k}"><img src="${iconUrl}"><a href="${v.url}">${v.title}</a>${deleteBut}</div>`
         })
