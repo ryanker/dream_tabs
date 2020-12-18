@@ -1,7 +1,6 @@
 let bg = chrome.extension.getBackgroundPage()
 let tabList = bg.tabList
-
-let mainEl = document.querySelector('.main')
+let mainEl = null
 document.addEventListener('DOMContentLoaded', async function () {
     init()
     initDrag() // 拖放
@@ -34,8 +33,11 @@ function init() {
         })
         s += '</div></div>'
     })
-    mainEl.childNodes.forEach(el => el.remove())
+    if (mainEl) mainEl.remove()
+    mainEl = document.createElement('div')
+    mainEl.className = 'main'
     mainEl.insertAdjacentHTML('afterbegin', s)
+    document.body.appendChild(mainEl)
 
     // 打开单条
     mainEl.querySelectorAll('.item').forEach(el => {
