@@ -46,7 +46,7 @@ function init() {
 
             // 如果没有上锁，就删除数据
             let p = this.parentNode.parentNode
-            let d = this.parentNode
+            let d = this
             let pkey = p.dataset.key
             let ikey = d.dataset.key
             if (!tabList[pkey].locked) {
