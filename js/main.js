@@ -34,7 +34,8 @@ function init() {
         })
         s += '</div></div>'
     })
-    mainEl.innerHTML = s
+    mainEl.childNodes.forEach(el => el.remove())
+    mainEl.insertAdjacentHTML('afterbegin', s)
 
     // 打开单条
     mainEl.querySelectorAll('.item').forEach(el => {
