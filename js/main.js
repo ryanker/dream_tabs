@@ -261,7 +261,7 @@ function initExport() {
     el.addEventListener('click', function () {
         let blob = new Blob([JSON.stringify(tabList, null, 2)], {type: 'application/json'})
         el.href = window.URL.createObjectURL(blob)
-        el.download = `梦想标签收纳盒数据备份_${(new Date()).toLocaleDateString().replace(/\D/g, '')}.json`
+        el.download = `梦想标签收纳盒数据备份_${getDate().replace(/\D/g, '')}.json`
     })
 }
 
