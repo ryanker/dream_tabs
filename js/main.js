@@ -4,6 +4,8 @@ let mainEl = null
 document.addEventListener('DOMContentLoaded', async function () {
     init()
     initDrag() // 拖放
+    initExport() // 导出
+    initImport() // 导入
 })
 
 function init() {
@@ -27,9 +29,8 @@ function init() {
 </div>`
         s += `<div class="card_items" data-locked="${items.locked}">`
         items.tabs.forEach((v, k) => {
-            let iconUrl = isFirefox ? 'https://s2.googleusercontent.com/s2/favicons?domain=' + (v.url ? (new URL(v.url)).host : '') : 'chrome://favicon/' + (v.url ? (new URL(v.url)).origin : '')
             let deleteBut = items.locked ? '' : '<span class="dmx_button item_remove" data-action="delete"><i class="icon icon-remove"></i>删除</span>'
-            s += `<div class="item" data-key="${k}"><img src="${iconUrl}"><a href="${v.url}">${v.title}</a>${deleteBut}</div>`
+            s += `<div class="item" data-key="${k}"><img src="${getFavicon(v.url)}"><a href="${v.url}">${v.title}</a>${deleteBut}</div>`
         })
         s += '</div></div>'
     })
@@ -253,4 +254,51 @@ function initDrag() {
             init()
         }
     })
+}
+
+function initExport() {
+    let el = document.querySelector('#export')
+    el.addEventListener('click', function () {
+        let blob = new Blob([JSON.stringify(tabList, null, 2)], {type: 'application/json'})
+        el.href = window.URL.createObjectURL(blob)
+        el.download = `梦想标签收纳盒数据备份_${(new Date()).toLocaleDateString().replace(/\D/g, '')}.json`
+    })
+}
+
+function initImport() {
+    let el = document.querySelector('#import')
+    el.addEventListener('click', function () {
+        let inp = document.createElement('input')
+        inp.type = 'file'
+        inp.accept = 'application/json'
+        inp.onchange = function () {
+            let files = this.files
+            if (files.length < 1) return
+            let f = files[0]
+            if (f.type !== 'application/json') return
+            let reader = new FileReader()
+            reader.onload = function (e) {
+                let data
+                try {
+                    data = JSON.parse(e.target.result)
+                } catch (e) {
+                }
+                if (!data) return
+                tabList = Object.assign(tabList, data)
+                console.log(tabList)
+                saveStorage(tabList)
+                init()
+            }
+            reader.readAsText(f)
+        }
+        inp.click()
+    })
+}
+
+function getFavicon(url) {
+    if (isFirefox) {
+        return 'https://s2.googleusercontent.com/s2/favicons?domain=' + (url.indexOf('http') === 0 ? (new URL(url)).host : 'localhost')
+    } else {
+        return 'chrome://favicon/' + (url ? (new URL(url)).origin : '')
+    }
 }

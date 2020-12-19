@@ -1,6 +1,10 @@
-html, body, p, h1, h2, h3, h4, h5, h6 {
+html, body, p, h1, h2, h3, h4, h5, h6, ul, li {
     margin: 0;
     padding: 0;
+}
+
+ul, li {
+    list-style: none;
 }
 
 * {
@@ -106,40 +110,73 @@ a:hover {
     content: "\e669";
 }
 
+.fx:after, .card_title:after {
+    display: block;
+    content: '';
+    clear: both;
+}
+
 .header {
     display: flex;
     z-index: 1;
-    position: sticky;
     top: 0;
-    left: 0;
+    position: sticky;
     background: #F6F7F9;
     box-shadow: 0 1px 2px 0 rgba(60, 64, 67, .30), 0 2px 6px 2px rgba(60, 64, 67, .15);
-    padding: 10px 20px;
-    font-weight: 400;
-    font-size: 1.375rem;
-    line-height: 1.75rem;
 }
 
 .header_inner {
-    display: flex;
-    align-items: center;
     width: 100%;
     max-width: 1000px;
     margin: 2px auto;
 }
 
-.header_inner a {
-    font-size: x-large;
-    color: #b1b1b1;
-    text-shadow: -1px -1px white, 1px 1px #333;
-    letter-spacing: 2px;
+.header_inner .logo {
+    float: left;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
 }
 
-.header_inner .icon-fan {
-    font-size: 1.8rem;
+.header_inner .logo a {
+    display: block;
+    color: #c7c7c7;
+    text-shadow: -1px -1px white, 1px 1px #333;
+    letter-spacing: 2px;
+    font-weight: 400;
+    font-size: x-large;
+    line-height: 1.75rem;
+}
+
+.header_inner .logo .icon {
+    font-size: 1.75rem;
     color: #1a73e8;
     display: inline-block;
     margin-right: 5px;
+}
+
+.header_inner .nav {
+    float: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 3px 10px 0;
+}
+
+.header_inner .nav li {
+    margin-left: 20px;
+}
+
+.header_inner .nav li:hover {
+    color: #1a73e8;
+}
+
+.header_inner .nav li .icon {
+    margin-right: 5px;
+}
+
+.header_inner .nav li a {
+    cursor: pointer;
 }
 
 .main {
@@ -164,12 +201,6 @@ a:hover {
     align-items: center;
     padding: 10px 15px;
     border-bottom: 1px solid #CCCFD0;
-}
-
-.card_title:after, .fx:after {
-    display: block;
-    content: '';
-    clear: both;
 }
 
 .card_title span {
