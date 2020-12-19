@@ -30,13 +30,13 @@ B.tabs.onActivated.addListener(function (info) {
     }).catch(err => debug('getTab error:', err))
 })
 
-/*// 启动时
+// 启动时
 setTimeout(() => {
     openHome()
     getAllTabs().then(tabs => tabs.forEach(tab => {
         tab.url.indexOf('chrome://newtab/') === 0 && B.tabs.remove(tab.id) // 启动时，如果有新建标签页，将其关闭
     }))
-}, 1)*/
+}, 1)
 
 function onTakeAll() {
     getAllTabs().then(tabs => {
