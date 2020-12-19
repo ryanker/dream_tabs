@@ -301,7 +301,7 @@ function getFavicon(url) {
     } else {
         let origin = ''
         try {
-            origin = (new URL(url)).origin
+            origin = (new URL(url)).origin || ''
         } catch (e) {
         }
         return 'chrome://favicon/' + origin
