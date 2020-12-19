@@ -299,6 +299,11 @@ function getFavicon(url) {
     if (isFirefox) {
         return 'https://s2.googleusercontent.com/s2/favicons?domain=' + (url.indexOf('http') === 0 ? (new URL(url)).host : 'localhost')
     } else {
-        return 'chrome://favicon/' + (url ? (new URL(url)).origin : '')
+        let origin = ''
+        try {
+            origin = (new URL(url)).origin
+        } catch (e) {
+        }
+        return 'chrome://favicon/' + origin
     }
 }
