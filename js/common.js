@@ -113,11 +113,29 @@ function getAllTabs() {
                 B.error ? reject(B.error) : resolve(tabs)
             })
         } else {
-            browser.tabs.query({}).then(tabs => {
-                resolve(tabs)
-            }, err => reject(err))
+            browser.tabs.query({}).then(tabs => resolve(tabs), err => reject(err))
         }
     })
+}
+
+function getTab(tabId) {
+    return new Promise((resolve, reject) => {
+        if (!isFirefox) {
+            B.tabs.get(tabId, info => B.error ? reject(B.error) : resolve(info))
+        } else {
+            browser.tabs.get(tabId).then(info => resolve(info), err => reject(err))
+        }
+    })
+}
+
+function getHost(url) {
+    if (!url) return ''
+    let u = {}
+    try {
+        u = new URL(url)
+    } catch (e) {
+    }
+    return u.host || ''
 }
 
 function storageLocalGet(options) {
