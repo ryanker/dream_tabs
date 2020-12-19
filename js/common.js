@@ -21,7 +21,7 @@ String.prototype.format = function () {
     })
 }
 
-function addTabList(tabs) {
+function addTabList(tabList, tabs) {
     if (tabs.length > 0) {
         let t = Date.now()
         tabList[t] = {
@@ -34,6 +34,7 @@ function addTabList(tabs) {
         }
         saveStorage(tabList)
     }
+    return tabList
 }
 
 function sortTabList(tabList) {
@@ -65,8 +66,10 @@ function getWeek(value) {
 
 function saveStorage(tabList) {
     localStorage.setItem('tabList', JSON.stringify(tabList))
-    storageLocalSet({tabList}).catch(err => debug(`save local error: ${err}`))
-    !isDebug && storageSyncSet({tabList}).catch(err => debug(`save sync error: ${err}`))
+    storageLocalSet({tabList}).catch(err => debug(`save local error: ${err}`)) // 最大可存放 5M
+
+    // todo: chrome 限制单项大小为 8K，总量为 100K，超过无法存放，所以如果放同步存储区，数据多了很容易失败。
+    // !isDebug && storageSyncSet({tabList}).catch(err => debug(`save sync error: ${err}`))
 }
 
 function loadStorage() {
@@ -81,15 +84,16 @@ function loadStorage() {
             }
             await storageLocalGet(['tabList']).then(r => {
                 list = Object.assign(list, r.tabList)
-            }).catch(err => {
-                reject(err, list)
-            })
-            await storageSyncGet(['tabList']).then(r => {
-                list = Object.assign(list, r.tabList)
                 resolve(list)
             }).catch(err => {
-                reject(err, list)
+                reject(err)
             })
+            // await storageSyncGet(['tabList']).then(r => {
+            //     list = Object.assign(list, r.tabList)
+            //     resolve(list)
+            // }).catch(err => {
+            //     reject(err)
+            // })
         })()
     })
 }
