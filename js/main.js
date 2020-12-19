@@ -1,6 +1,6 @@
 let bg = chrome.extension.getBackgroundPage()
 let tabList = bg.tabList
-let mainEl = null
+let mainEl = document.querySelector('.main')
 document.addEventListener('DOMContentLoaded', async function () {
     init()
     initDrag() // 拖放
@@ -34,11 +34,7 @@ function init() {
         })
         s += '</div></div>'
     })
-    if (mainEl) mainEl.remove()
-    mainEl = document.createElement('div')
-    mainEl.className = 'main'
-    mainEl.insertAdjacentHTML('afterbegin', s)
-    document.body.appendChild(mainEl)
+    mainEl.innerHTML = s
 
     // 打开单条
     mainEl.querySelectorAll('.item').forEach(el => {
@@ -285,7 +281,6 @@ function initImport() {
                 }
                 if (!data) return
                 tabList = Object.assign(tabList, data)
-                console.log(tabList)
                 saveStorage(tabList)
                 init()
             }
