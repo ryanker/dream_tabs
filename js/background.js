@@ -5,9 +5,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadStorage().then(list => {
         tabList = list
         storageShowAll()
-    }).catch((err, list) => {
-        tabList = list || {}
-        debug('loadStorage error:', err, 'list:', list)
+    }).catch(err => {
+        debug('loadStorage error:', err)
     })
 
     B.browserAction.onClicked.addListener(onTakeAll)
@@ -88,6 +87,7 @@ function onExcludeHost(_, tab) {
 }
 
 function isExclude(url) {
+    if (!url) return true
     if (url.indexOf(B.homeUrl) === 0) return true // 排除扩展首页
     if (url.indexOf('chrome://newtab/') === 0) return true // 排除新标签页
     if (url.indexOf('about:') === 0) return true // 排除空白页

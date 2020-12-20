@@ -67,9 +67,7 @@ function getWeek(value) {
 function saveStorage(tabList) {
     localStorage.setItem('tabList', JSON.stringify(tabList))
     storageLocalSet({tabList}).catch(err => debug(`save local error: ${err}`)) // 最大可存放 5M
-
-    // todo: chrome 限制单项大小为 8K，总量为 100K，超过无法存放，所以如果放同步存储区，数据多了很容易失败。
-    // !isDebug && storageSyncSet({tabList}).catch(err => debug(`save sync error: ${err}`))
+    !isDebug && saveStorageSync(tabList) // 限制最多存放 75 K
 }
 
 function loadStorage() {
@@ -84,18 +82,62 @@ function loadStorage() {
             }
             await storageLocalGet(['tabList']).then(r => {
                 list = Object.assign(list, r.tabList)
+            }).catch(err => {
+                reject(err)
+            })
+
+            // 同步远程数据
+            let options = []
+            for (let i = 1; i <= 12; i++) options.push(`tabList_${i}`)
+            await storageSyncGet(options).then(r => {
+                let s = ''
+                options.forEach(k => {
+                    s += r[k] || ''
+                })
+                let o
+                try {
+                    o = JSON.parse(s) || {}
+                } catch (err) {
+                    debug('[storageSync JSON error]', err)
+                }
+                // console.log('o:', o)
+                if (o) list = Object.assign(list, o)
                 resolve(list)
             }).catch(err => {
                 reject(err)
             })
-            // await storageSyncGet(['tabList']).then(r => {
-            //     list = Object.assign(list, r.tabList)
-            //     resolve(list)
-            // }).catch(err => {
-            //     reject(err)
-            // })
         })()
     })
+}
+
+// chrome 限制单项大小为 8K，总量为 100K，超过无法存放。
+// firefox 和 chrome 一样，见 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
+function saveStorageSync(tabList) {
+    let maxSize = 8 * 800 * 12 // 限制最大存放 75 K，如果超过，则不保存。
+    let s = JSON.stringify(tabList)
+    if (s.length > maxSize) {
+        // 如果数据太大，仅保存已上锁的数据。
+        let data = {}
+        Object.keys(tabList).forEach(k => {
+            let v = tabList[k]
+            if (v && v.locked) data[k] = v
+        })
+        s = JSON.stringify(data)
+        if (s.length > maxSize) return
+    }
+
+    // 分成 12 份数据
+    let upData = {}
+    let size = 8 * 800 // 浏览器限制大小和文档好像不太一致
+    let start = 0
+    for (let i = 1; i <= 12; i++) {
+        upData[`tabList_${i}`] = s.substr(start, size)
+        // console.log(upData[`tabList_${i}`].length)
+        start += size
+        if (start > s.length) break
+    }
+    // console.log(upData)
+    storageSyncSet(upData).catch(err => debug(`save sync error: ${err}`))
 }
 
 function openHome() {
