@@ -85,7 +85,7 @@ function init() {
             let d = this.parentNode
             let pkey = p.dataset.key
             let ikey = d.dataset.key
-            if (tabList[pkey]?.tabs) {
+            if (tabList[pkey].tabs) {
                 d.remove()
                 tabList[pkey].tabs.splice(ikey, 1)
                 if (tabList[pkey].tabs.length < 1) delete tabList[pkey]
@@ -242,7 +242,7 @@ function initDrag() {
         let ikey = prevEl && prevEl.className === className ? Number(prevEl.dataset.key) + 1 : 0
         let pkey = dragEl.parentNode.parentNode.dataset.key
         let val = tabList[dragPkey].tabs[dragIkey]
-        if (!tabList[pkey]?.locked && val) {
+        if (!tabList[pkey].locked && val) {
             tabList[dragPkey].tabs.splice(dragIkey, 1) // 删除移动数据
             tabList[pkey].tabs.splice(ikey, 0, val) // 添加移动数据
             if (tabList[dragPkey].tabs.length < 1) delete tabList[dragPkey]
