@@ -32,20 +32,24 @@ B.tabs.onActivated.addListener(function (info) {
 // 启动时
 setTimeout(() => {
     openHome()
-    getAllTabs().then(tabs => tabs.forEach(tab => {
-        tab.url.indexOf('chrome://newtab/') === 0 && B.tabs.remove(tab.id) // 启动时，如果有新建标签页，将其关闭
+    getTabsQuery().then(tabs => tabs.forEach(tab => {
+        // 启动时，如果有新建标签页，将其关闭
+        if (tab.url.indexOf(B.homeUrl) === 0
+            || tab.url.indexOf('chrome://newtab/') === 0 || tab.url.indexOf('edge://newtab/') === 0
+            || tab.url.indexOf('about:newtab') === 0 || tab.url.indexOf('about:home') === 0) {
+            B.tabs.remove(tab.id)
+        }
     }))
 }, 1)
 
 function onTakeAll() {
-    getAllTabs().then(tabs => {
+    getTabsQuery().then(tabs => {
         let ids = []
         let arr = []
         let list = []
         tabs.forEach(tab => {
-            if (isExclude(tab.url)) return // 排除链接
             ids.push(tab.id)
-
+            if (isExclude(tab.url)) return // 排除链接
             if (arr.includes(tab.url)) return // 排除重复链接
             arr.push(tab.url)
 
@@ -55,13 +59,13 @@ function onTakeAll() {
         openHome()
         B.tabs.remove(ids)
     }).catch(err => {
-        debug('getAllTabs error:', err)
+        debug('getTabsQuery error:', err)
     })
 }
 
 function onTake(_, tab) {
-    let keys = Object.keys(tabList)
     if (isExclude(tab.url)) return // 排除链接，不往下执行
+    let keys = Object.keys(tabList)
     if (keys.length > 0) {
         keys.sort()
         keys.reverse()
@@ -71,6 +75,24 @@ function onTake(_, tab) {
     } else {
         addTabList(tabList, [{title: tab.title, url: tab.url}])
     }
+
+    // 打开主页
+    getTabsQuery({
+        url: B.homeUrl + '*'
+    }).then(tabs => {
+        if (tabs.length === 0) {
+            openHome()
+        } else {
+            tabs.forEach((tab, i) => {
+                if (i === 0) {
+                    B.tabs.update(tab.id, {active: true})
+                    B.tabs.reload(tab.id)
+                } else {
+                    B.tabs.remove(tab.id)
+                }
+            })
+        }
+    })
     // B.tabs.remove(tab.id)
 }
 
@@ -90,6 +112,7 @@ function isExclude(url) {
     if (!url) return true
     if (url.indexOf(B.homeUrl) === 0) return true // 排除扩展首页
     if (url.indexOf('chrome://newtab/') === 0) return true // 排除新标签页
-    if (url.indexOf('about:') === 0) return true // 排除空白页
+    if (url.indexOf('edge://newtab/') === 0) return true // 排除新标签页
+    if (url.indexOf('about:') === 0) return true // 排除空白页 & Firefox
     return excludeHostArr.includes(getHost(url))
 }

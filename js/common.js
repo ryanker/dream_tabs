@@ -148,14 +148,15 @@ function open(url) {
     B.tabs.create({url})
 }
 
-function getAllTabs() {
+function getTabsQuery(queryInfo) {
     return new Promise((resolve, reject) => {
+        queryInfo = queryInfo || {}
         if (!isFirefox) {
-            B.tabs.query({}, tabs => {
+            B.tabs.query(queryInfo, tabs => {
                 B.error ? reject(B.error) : resolve(tabs)
             })
         } else {
-            browser.tabs.query({}).then(tabs => resolve(tabs), err => reject(err))
+            browser.tabs.query(queryInfo).then(tabs => resolve(tabs), err => reject(err))
         }
     })
 }
