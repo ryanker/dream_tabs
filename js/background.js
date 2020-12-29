@@ -52,7 +52,6 @@ function onTakeAll() {
             if (isExclude(tab.url)) return // 排除链接
             if (arr.includes(tab.url)) return // 排除重复链接
             arr.push(tab.url)
-
             list.push({title: tab.title, url: tab.url})
         })
         addTabList(tabList, list)
