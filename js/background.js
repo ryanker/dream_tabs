@@ -40,7 +40,7 @@ setTimeout(() => {
             B.tabs.remove(tab.id)
         }
     }))
-}, 1)
+}, 1000)
 
 function onTakeAll() {
     getTabsQuery().then(tabs => {
