@@ -140,7 +140,7 @@ a:hover {
 
 .header_inner .logo a {
     display: block;
-    color: #c7c7c7;
+    color: #bfbfbf;
     text-shadow: -1px -1px white, 1px 1px #333;
     letter-spacing: 2px;
     font-weight: 400;
@@ -150,7 +150,7 @@ a:hover {
 
 .header_inner .logo .icon {
     font-size: 1.75rem;
-    color: #1a73e8;
+    color: #0953FF;
     display: inline-block;
     margin-right: 5px;
 }
@@ -315,4 +315,8 @@ a:hover {
 
 .card_items.drag .item .item_remove {
     display: none;
+}
+
+.icon-favorite {
+    color: #ff000b;
 }
