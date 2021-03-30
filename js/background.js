@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 B.contextMenus.create({title: "打开收纳盒", onclick: openHome})
 B.contextMenus.create({type: "separator"})
 B.contextMenus.create({title: "收纳全部标签", onclick: onTakeAll})
+B.contextMenus.create({title: "收纳其他标签", onclick: onOther}) // 收纳除此标签外的其他标签
 B.contextMenus.create({title: "仅收纳此标签", onclick: onTake})
 B.contextMenus.create({type: "separator"})
 B.contextMenus.create({title: "排除这个网站", onclick: onExcludeHost, type: 'checkbox', checked: false, id: 'excludeHost'})
@@ -48,6 +49,27 @@ function onTakeAll() {
         let arr = []
         let list = []
         tabs.forEach(tab => {
+            ids.push(tab.id)
+            if (isExclude(tab.url)) return // 排除链接
+            if (arr.includes(tab.url)) return // 排除重复链接
+            arr.push(tab.url)
+            list.push({title: tab.title, url: tab.url})
+        })
+        addTabList(tabList, list)
+        openHome()
+        B.tabs.remove(ids)
+    }).catch(err => {
+        debug('getTabsQuery error:', err)
+    })
+}
+
+function onOther(_, _tab) {
+    getTabsQuery().then(tabs => {
+        let ids = []
+        let arr = []
+        let list = []
+        tabs.forEach(tab => {
+            if (tab.id === _tab.id) return // 排除当前标签页
             ids.push(tab.id)
             if (isExclude(tab.url)) return // 排除链接
             if (arr.includes(tab.url)) return // 排除重复链接
